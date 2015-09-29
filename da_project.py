@@ -3,22 +3,19 @@ __author__ = 'mrunmayee'
 # No. of followers, No. of followed, No. of tweets
 
 import tweepy
+import psycopg2
 
-ckey = ''
-csecret = ''
-atoken = ''
-asecret = ''
+# ckey = ''
+# csecret = ''
+# atoken = ''
+# asecret = ''
 
 auth = tweepy.OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
 
 api = tweepy.API(auth)
-public_tweets = api.home_timeline()
-
 results = api.search(q = "supermoon", count = 2)
-
-# for tweet in public_tweets:
-#     print tweet.text
+rows = []
 
 
 def profile_info(user):
@@ -34,27 +31,19 @@ def profile_info(user):
     print user.friends_count
     print user.screen_name
     print user.statuses_count
-    # print user.location
-    # print user.description
 
-
-def userinfo(user):
-    for friend in user.friends():                                   # Following
-        print friend
-        print "Screen-name", friend.screen_name
-        # print friend.profile_use_background_image
-        print friend.id_str
-        print friend.statuses_count
-        print friend.description
-        print friend.friends_count
-        print friend.location
-        print friend.followers_count
-
-    print("\n")
-    for follower in tweepy.Cursor(api.followers).items():           # Your followers
-        print follower.screen_name
-        # print follower.follow(), follower.screen_name             # Follow your followers
-
+    # For db
+    dict1 = {}
+    dict1['id'] = user.id_str
+    dict1['has_profile_image'] = user.default_profile_image
+    dict1['has_profile_image_background'] = user.profile_use_background_image
+    dict1['favourites_count'] = user.favourites_count
+    dict1['created_at'] = user.created_at
+    dict1['followers_count'] = user.followers_count
+    dict1['following_count'] = user.friends_count
+    dict1['screen_name'] = user.screen_name
+    dict1['statuses_count'] = user.statuses_count
+    rows.append(dict1)
 
 
 def search(results):
@@ -69,17 +58,28 @@ def search(results):
         print result.author
 
 
-
+# Tweeet details
 search(results)
 
-
-
-list_users = ['BillGates', 'narendramodi', 'rihanna', 'elonmusk', 'narendramodi', 'realDonaldTrump', 'ActuallyNPH',
+# User details
+list_users = ['BillGates', 'rihanna', 'elonmusk', 'narendramodi', 'realDonaldTrump', 'ActuallyNPH',
               'EmWatson', 'SrBachchan', 'DalaiLama', 'MegWhitman', 'marissamayer', 'tim_cook', 'evanspiegel',
-              'drewhouston',
-              'sundarpichai']
-# print "Screen name\tFollowers count\tFollowed Count\tNo. of tweets\tLocation\tDescription"
+              'drewhouston', 'sundarpichai']
+
 for name in list_users:
     profile_info(name)
-    #print("\n")
 
+
+# Store data in the db. Change the connection string according to your db name.
+# given conn OR conn = psycopg2.connect(database = "da", username = "", password = "")
+print "Database Connection"
+conn = psycopg2.connect(database="da")
+cur = conn.cursor()
+
+cur.executemany("""INSERT INTO twitter_data.twitter_users(id, has_profile_image, has_profile_image_background,
+favourites_count, created_at, followers_count, following_count, screen_name, statuses_count) VALUES (%(id)s,
+%(has_profile_image)s, %(has_profile_image_background)s, %(favourites_count)s, %(created_at)s,
+%(followers_count)s, %(following_count)s, %(screen_name)s, %(statuses_count)s)""", rows)
+
+conn.commit()
+print "Success"
