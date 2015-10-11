@@ -1,4 +1,4 @@
-tdat  <- as.data.frame(read.table("data_analysis", sep = ",", stringsAsFactors = FALSE, row.names = NULL, header = TRUE))
+tdat  <- as.data.frame(read.csv("/Users/sakshi024/Desktop/University Docs/Data Acquisition/GroupProject/data_twitter.csv", sep = ",", header = TRUE))
                        
 hist(tdat$retweet_count)
 summary(tdat$retweet_count)
@@ -9,6 +9,7 @@ tdat["flag"] <- sapply(tdat$max_cnt, function(x){
 hgh_rtwt <- tdat[which(tdat$flag ==1), ]
 low_rtwt <- tdat[which(tdat$flag ==0), ]
 
+as.numeric(as.character(tdat$has_hashtag))
 #### Hypothesis 1 ########################################
 # If a tweet has hashtag then average retweet count is higher for these 
 # tweets in comparison to those which do not have hashtag(one or more)
@@ -24,7 +25,7 @@ wilcox.test(tdat[which(tdat$has_hashtag == "t"), 2],
             paired = FALSE, exact = NULL, correct = FALSE,
             conf.int = FALSE, conf.level = 0.95)
 # Resuts
-# W = 60484, p-value = 1.022e-14
+# W = 339050000, p-value = 1.17e-08
 # alternative hypothesis: true location shift is greater than 0
 # alternate hypothesis is validated to be true
 (mean(tdat[which(tdat$has_hashtag == "t"), 2]) - mean(tdat[which(tdat$has_hashtag == "f"), 2])) / mean(tdat[which(tdat$has_hashtag == "f"), 2])
@@ -37,12 +38,12 @@ wilcox.test(tdat[which(tdat$has_hashtag == "t"), 2],
 # Checked for normality..both samples are approximately normal
 wilcox.test(tdat[which(tdat$has_url == "t"), 2],
             tdat[which(tdat$has_url == "f"), 2],
-            alternative = c("greater"),
+            alternative = c("two.sided"),
             paired = FALSE, exact = NULL, correct = FALSE,
             conf.int = FALSE, conf.level = 0.95)
 # Resuts
-# W = 98510, p-value = 0.05771
-# alternative hypothesis: true location shift is greater than 0
+# W = 360700000, p-value < 2.2e-16
+# alternative hypothesis: true location shift is not equal to 0
 # alternate hypothesis is validated to be true
 (mean(tdat[which(tdat$has_url == "t"), 2]) - mean(tdat[which(tdat$has_url== "f"), 2])) / mean(tdat[which(tdat$has_url == "f"), 2])
 
@@ -56,7 +57,7 @@ wilcox.test(tdat[which(tdat$has_photo == "t"), 2],
             paired = FALSE, exact = NULL, correct = FALSE,
             conf.int = FALSE, conf.level = 0.95)
 # Resuts
-# W = 49909, p-value < 2.2e-16
+# W = 239870000, p-value < 2.2e-16
 # alternative hypothesis: true location shift is greater than 0
 # alternate hypothesis is validated to be true
 (mean(tdat[which(tdat$has_photo == "t"), 2]) - mean(tdat[which(tdat$has_photo== "f"), 2])) / mean(tdat[which(tdat$has_photo == "f"), 2])
@@ -144,8 +145,8 @@ scatterplot_matrix <- function(test) {
 }
 
 # plot(cakes1$time, cakes1$temp)
-scatterplot_matrix(tdat[,c(2,8)])
-cor(tdat[,c(2,8)]) #  0.9807831  
+scatterplot_matrix(tdat[,c(4,9)])
+cor(tdat[,c(4,9)]) # 0.9245719
 
 #### Hypothesis 6 ########################################
 # If user who made the tweet has a profile image
@@ -157,29 +158,30 @@ wilcox.test(tdat[which(tdat$has_profile_image == "t"), 2],
             alternative = c("greater"),
             paired = FALSE, exact = NULL, correct = FALSE,
             conf.int = FALSE, conf.level = 0.95)
-# REsults
-# W = 33013, p-value = 1
+# Results
+# W = 10729000, p-value = 0.0002955
 # alternative hypothesis: true location shift is greater than 0
 
+
 #### Hypothesis 7 ########################################
-# More the number of followersretweet count is higher for these 
+# More the number of followers retweet count is higher for these 
 # users
 
 scatterplot_matrix(tdat[,c(2,16)]) # followers
-cor(tdat[,c(2,16)]) # 0.5605956  
+cor(tdat[,c(4,18)]) # 0.2051794  
 
 
 # Check that correlation coefficient is different from zero..rho ≠ 0
 
-t <- 0.5605956  * sqrt((915)/(1 - 0.5605956^2 )) 
-# t  = 20.47778 Hence proved
+t <- 0.2051794  * sqrt((915)/(1 - 0.2051794^2 )) 
+# t  = 6.341382 Hence proved
 
 #### Hypothesis 7 ########################################
 # More the number of following, retweet count is higher for these 
 # users
 
 scatterplot_matrix(tdat[,c(2,17)]) # following
-cor(tdat[,c(2,17)]) # 0.01657466      
+cor(tdat[,c(4,19)]) # -0.02987319     
 
 
 # Check that correlation coefficient is different from zero..rho ≠ 0
