@@ -1,4 +1,4 @@
-setwd("/Users/mayankkedia/Documents/USF/Data_Acquisition/Presentation/")
+setwd("/Users/mayankkedia/Dropbox/USF/Data_Acquisition/Presentation/")
 df <- read.csv("data_twitter.csv", header = TRUE)
 head(df)
 
@@ -21,10 +21,14 @@ df[df$has_profile_image_background =='t','has_profile_image_background_bin']<- 1
 df[df$has_profile_image_background =='f','has_profile_image_background_bin']<- 0
 d <- df[c(4, 9, 16, 18, 19, 21, 22, 23, 24, 25, 26)]
 
-l <- lm(retweet_count ~ ., d)
+l <- lm(retweet_count ~ . - favorite_count , d)
 summary(l)
-l <- lm(retweet_count ~ . - has_profile_image_bin - following_count, d)
+l <- lm(retweet_count ~ . - favorite_count - has_hashtag_bin, d)
 summary(l)
 
-l <- lm(retweet_count ~ . - has_profile_image_bin - following_count - has_hashtag_bin, d)
+l <- lm(retweet_count ~ . - favorite_count - has_hashtag_bin - has_profile_image_background_bin - has_profile_image_bin, d)
 summary(l)
+l <- lm(retweet_count ~ . - has_profile_image_bin - has_profile_image_background_bin - following_count- favorite_count - statuses_count, d)
+summary(l)
+
+cor(d)
