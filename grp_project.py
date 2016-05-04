@@ -2,10 +2,10 @@ import tweepy
 import re
 
 
-ckey = 'pnE9kjOJOhAO3WTUMJ4rLRe1W'
-csecret = 'e7pEcYtCBkr3jjalFjlVNakcjZkn4sWGD5pKLDASA3zAnLnRNz'
-atoken = '3665746454-sKiPPDpeGc05UHrhR3IZGtgH9fsU0jc3uIM35hP'
-asecret = '4wMtT0MVGh9O7GGHQFpmbfSkAS9j3BA3G9oo8K528bC9j'
+ckey = ''
+csecret = ''
+atoken = ''
+asecret = ''
 
 auth = tweepy.OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
